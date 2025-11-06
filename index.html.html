@@ -37,7 +37,6 @@
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        /* Mobile First Layout */
         .app-container {
             max-width: 100%;
             min-height: 100vh;
@@ -45,7 +44,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         .header {
             background: var(--primary);
             color: white;
@@ -88,7 +86,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -123,14 +120,12 @@
             margin-bottom: 4px;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             padding: 80px 15px 70px;
             overflow-y: auto;
         }
 
-        /* Products Grid - Mobile Optimized */
         .categories-scroll {
             display: flex;
             gap: 8px;
@@ -211,7 +206,6 @@
             font-size: 1rem;
         }
 
-        /* Cart Sidebar - Mobile Optimized */
         .cart-sidebar {
             position: fixed;
             top: 0;
@@ -340,7 +334,6 @@
             background: var(--primary-dark);
         }
 
-        /* Floating Action Button */
         .fab {
             position: fixed;
             bottom: 80px;
@@ -375,7 +368,6 @@
             font-weight: 700;
         }
 
-        /* Admin Panel - Mobile Optimized */
         .admin-panel {
             background: white;
             border-radius: 15px;
@@ -408,7 +400,6 @@
             color: white;
         }
 
-        /* Enhanced Backup System */
         .backup-section {
             background: var(--light);
             padding: 20px;
@@ -437,7 +428,6 @@
             color: var(--primary);
         }
 
-        /* Login Screen */
         .login-screen {
             position: fixed;
             top: 0;
@@ -482,41 +472,36 @@
             background: var(--border);
         }
 
-        /* Toast Notifications */
-        .toast-success {
-            background: var(--success);
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .toast-error {
-            background: var(--accent);
+        .add-to-cart-btn {
+            background: var(--primary);
+            color: white;
         }
 
-        /* Responsive Design */
+        .cancel-btn {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         @media (min-width: 768px) {
             .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
-            
             .cart-sidebar {
                 width: 400px;
             }
-        }
-
-        /* Loading States */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
         }
     </style>
 </head>
@@ -601,26 +586,33 @@
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 <h4>Cloud Backup</h4>
                                 <p>Auto-save to cloud</p>
-                                <button class="action-btn add-to-cart-btn" style="margin-top: 10px; width: 100%;">Enable</button>
+                                <button class="action-btn add-to-cart-btn" id="enableCloudBackup" style="margin-top: 10px; width: 100%;">Enable</button>
                             </div>
                             <div class="backup-card">
                                 <i class="fas fa-file-export"></i>
                                 <h4>Export Data</h4>
                                 <p>Download backup file</p>
-                                <button class="action-btn add-to-cart-btn" style="margin-top: 10px; width: 100%;">Export</button>
+                                <button class="action-btn add-to-cart-btn" id="exportData" style="margin-top: 10px; width: 100%;">Export</button>
                             </div>
                             <div class="backup-card">
                                 <i class="fas fa-file-import"></i>
                                 <h4>Import Data</h4>
                                 <p>Restore from backup</p>
-                                <button class="action-btn cancel-btn" style="margin-top: 10px; width: 100%;">Import</button>
+                                <input type="file" id="importFile" accept=".json" style="display: none;">
+                                <button class="action-btn cancel-btn" id="importData" style="margin-top: 10px; width: 100%;">Import</button>
                             </div>
                             <div class="backup-card">
                                 <i class="fas fa-sync"></i>
                                 <h4>Auto Sync</h4>
                                 <p>Sync across devices</p>
-                                <button class="action-btn cancel-btn" style="margin-top: 10px; width: 100%;">Setup</button>
+                                <button class="action-btn cancel-btn" id="setupSync" style="margin-top: 10px; width: 100%;">Setup</button>
                             </div>
+                        </div>
+
+                        <!-- Backup Status -->
+                        <div id="backupStatus" style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                            <strong>Status:</strong> <span id="statusText">Ready</span>
+                            <div id="lastBackupInfo" style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;"></div>
                         </div>
                     </div>
                 </div>
@@ -681,16 +673,494 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
     <script>
-        // Enhanced Mobile POS with Better Backup
-        // [The complete JavaScript code would go here with all the features]
-        
-        // This is a simplified version - the full implementation would include:
-        // 1. Touch-optimized interface
-        // 2. Advanced backup with cloud sync
-        // 3. Real-time data synchronization
-        // 4. Enhanced mobile gestures
-        // 5. Offline capability
-        // 6. Push notifications
+        // Enhanced Mobile POS with Advanced Backup System
+        class DailyDelightPOS {
+            constructor() {
+                this.products = JSON.parse(localStorage.getItem('dailyDelightProducts')) || this.getDefaultProducts();
+                this.staff = JSON.parse(localStorage.getItem('dailyDelightStaff')) || this.getDefaultStaff();
+                this.orders = JSON.parse(localStorage.getItem('dailyDelightOrders')) || [];
+                this.sales = JSON.parse(localStorage.getItem('dailyDelightSales')) || [];
+                
+                this.currentCart = [];
+                this.currentUser = null;
+                this.pinInput = "";
+                this.autoBackupEnabled = false;
+                this.cloudBackupEnabled = false;
+                
+                this.init();
+            }
+
+            getDefaultProducts() {
+                return [
+                    { id: 1, name: "Classic Vanilla", price: 599, category: "classic", icon: "fas fa-ice-cream", image: null },
+                    { id: 2, name: "Chocolate Dream", price: 649, category: "chocolate", icon: "fas fa-cookie", image: null },
+                    { id: 3, name: "Caramel Swirl", price: 699, category: "classic", icon: "fas fa-candy-cane", image: null },
+                    { id: 4, name: "Strawberry Bliss", price: 599, category: "fruity", icon: "fas fa-stroopwafel", image: null },
+                    { id: 5, name: "Mango Tango", price: 649, category: "fruity", icon: "fas fa-lemon", image: null },
+                    { id: 6, name: "Cookies & Cream", price: 699, category: "chocolate", icon: "fas fa-cookie-bite", image: null }
+                ];
+            }
+
+            getDefaultStaff() {
+                return [
+                    { id: 1, name: "Admin", pin: "9999", role: "admin" },
+                    { id: 2, name: "Manager", pin: "8888", role: "manager" },
+                    { id: 3, name: "Staff", pin: "1234", role: "staff" }
+                ];
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.renderProducts();
+                this.updateBackupStatus();
+                this.startAutoBackup();
+            }
+
+            setupEventListeners() {
+                // Login System
+                document.querySelectorAll('.pin-btn[data-digit]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        if (this.pinInput.length < 4) {
+                            this.pinInput += e.target.dataset.digit;
+                            this.updatePinDisplay();
+                        }
+                    });
+                });
+
+                document.getElementById('clearPin').addEventListener('click', () => {
+                    this.pinInput = "";
+                    this.updatePinDisplay();
+                });
+
+                document.getElementById('submitPin').addEventListener('click', () => {
+                    this.handleLogin();
+                });
+
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        this.handleNavigation(e.target.closest('.nav-item').dataset.page);
+                    });
+                });
+
+                // Categories
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.renderProducts(e.target.dataset.category);
+                    });
+                });
+
+                // Cart
+                document.getElementById('cartFab').addEventListener('click', () => {
+                    this.toggleCart();
+                });
+
+                document.querySelector('.close-cart').addEventListener('click', () => {
+                    this.toggleCart();
+                });
+
+                // Checkout
+                document.getElementById('checkoutBtn').addEventListener('click', () => {
+                    this.handleCheckout();
+                });
+
+                // Admin Tabs
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                        e.target.classList.add('active');
+                        // Handle tab switching here
+                    });
+                });
+
+                // Backup System
+                document.getElementById('exportData').addEventListener('click', () => {
+                    this.exportData();
+                });
+
+                document.getElementById('importData').addEventListener('click', () => {
+                    document.getElementById('importFile').click();
+                });
+
+                document.getElementById('importFile').addEventListener('change', (e) => {
+                    this.importData(e);
+                });
+
+                document.getElementById('enableCloudBackup').addEventListener('click', () => {
+                    this.toggleCloudBackup();
+                });
+
+                document.getElementById('setupSync').addEventListener('click', () => {
+                    this.setupAutoSync();
+                });
+
+                // Touch optimizations
+                this.setupTouchEvents();
+            }
+
+            setupTouchEvents() {
+                // Swipe to close cart
+                let startX = 0;
+                const cartSidebar = document.getElementById('cartSidebar');
+                
+                cartSidebar.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+
+                cartSidebar.addEventListener('touchmove', (e) => {
+                    if (!startX) return;
+                    
+                    const currentX = e.touches[0].clientX;
+                    const diff = startX - currentX;
+                    
+                    if (diff > 50) { // Swipe left to close
+                        this.toggleCart();
+                        startX = 0;
+                    }
+                });
+            }
+
+            handleLogin() {
+                const staffMember = this.staff.find(s => s.pin === this.pinInput);
+                if (staffMember) {
+                    this.currentUser = staffMember;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    document.getElementById('userName').textContent = staffMember.name;
+                    
+                    if (staffMember.role !== 'admin') {
+                        document.querySelector('[data-page="admin"]').style.display = 'none';
+                    }
+                    
+                    this.showToast(`Welcome, ${staffMember.name}!`, 'success');
+                } else {
+                    this.showToast('Invalid PIN! Try 1234 for staff or 9999 for admin.', 'error');
+                    this.pinInput = "";
+                    this.updatePinDisplay();
+                }
+            }
+
+            updatePinDisplay() {
+                let display = "";
+                for (let i = 0; i < 4; i++) {
+                    display += this.pinInput[i] ? "•" : "_";
+                }
+                document.getElementById('pinDisplay').textContent = display;
+            }
+
+            handleNavigation(page) {
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                document.querySelector(`[data-page="${page}"]`).classList.add('active');
+                
+                document.getElementById('posSystem').classList.add('hidden');
+                document.getElementById('adminPanel').classList.add('hidden');
+                
+                switch(page) {
+                    case 'pos':
+                        document.getElementById('posSystem').classList.remove('hidden');
+                        break;
+                    case 'admin':
+                        if (this.currentUser.role === 'admin') {
+                            document.getElementById('adminPanel').classList.remove('hidden');
+                        }
+                        break;
+                    case 'orders':
+                    case 'reports':
+                        this.showToast(`${page.charAt(0).toUpperCase() + page.slice(1)} feature coming soon!`, 'info');
+                        break;
+                }
+            }
+
+            renderProducts(category = 'all') {
+                const productsGrid = document.getElementById('productsGrid');
+                const filteredProducts = category === 'all' 
+                    ? this.products 
+                    : this.products.filter(p => p.category === category);
+                
+                productsGrid.innerHTML = '';
+                
+                filteredProducts.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card';
+                    productCard.innerHTML = `
+                        <div class="product-image">
+                            ${product.image ? `<img src="${product.image}" alt="${product.name}">` : `<i class="${product.icon}"></i>`}
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">Rs. ${product.price}</div>
+                        </div>
+                    `;
+                    
+                    productCard.addEventListener('click', () => {
+                        this.addToCart(product);
+                        this.showToast(`Added ${product.name} to cart!`, 'success');
+                    });
+                    
+                    productsGrid.appendChild(productCard);
+                });
+            }
+
+            addToCart(product) {
+                const existingItem = this.currentCart.find(item => item.product.id === product.id);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    this.currentCart.push({
+                        id: Date.now(),
+                        product: product,
+                        quantity: 1,
+                        modifiers: {}
+                    });
+                }
+                
+                this.updateCartUI();
+            }
+
+            updateCartUI() {
+                const cartItems = document.getElementById('cartItems');
+                const totalAmount = document.getElementById('totalAmount');
+                const cartBadge = document.getElementById('cartBadge');
+                
+                // Update badge
+                const totalItems = this.currentCart.reduce((sum, item) => sum + item.quantity, 0);
+                cartBadge.textContent = totalItems;
+                
+                // Update cart items
+                if (this.currentCart.length === 0) {
+                    cartItems.innerHTML = `
+                        <div style="text-align: center; color: var(--gray); padding: 40px 20px;">
+                            <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>Your cart is empty</p>
+                        </div>
+                    `;
+                    totalAmount.textContent = 'Rs. 0.00';
+                    return;
+                }
+                
+                let cartHTML = '';
+                let total = 0;
+                
+                this.currentCart.forEach(item => {
+                    const itemTotal = item.product.price * item.quantity;
+                    total += itemTotal;
+                    
+                    cartHTML += `
+                        <div class="cart-item">
+                            <div class="item-details">
+                                <div class="item-name">${item.product.name}</div>
+                                <div class="item-modifiers">No modifiers</div>
+                            </div>
+                            <div class="item-controls">
+                                <button class="quantity-btn decrease" data-id="${item.id}">-</button>
+                                <span class="item-quantity">${item.quantity}</span>
+                                <button class="quantity-btn increase" data-id="${item.id}">+</button>
+                            </div>
+                            <div class="item-price">Rs. ${itemTotal}</div>
+                        </div>
+                    `;
+                });
+                
+                cartItems.innerHTML = cartHTML;
+                totalAmount.textContent = `Rs. ${total}`;
+                
+                // Add event listeners to quantity buttons
+                cartItems.querySelectorAll('.quantity-btn.decrease').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const itemId = parseInt(e.target.dataset.id);
+                        this.decreaseQuantity(itemId);
+                    });
+                });
+                
+                cartItems.querySelectorAll('.quantity-btn.increase').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const itemId = parseInt(e.target.dataset.id);
+                        this.increaseQuantity(itemId);
+                    });
+                });
+            }
+
+            increaseQuantity(itemId) {
+                const item = this.currentCart.find(item => item.id === itemId);
+                if (item) {
+                    item.quantity += 1;
+                    this.updateCartUI();
+                }
+            }
+
+            decreaseQuantity(itemId) {
+                const itemIndex = this.currentCart.findIndex(item => item.id === itemId);
+                if (itemIndex !== -1) {
+                    if (this.currentCart[itemIndex].quantity > 1) {
+                        this.currentCart[itemIndex].quantity -= 1;
+                    } else {
+                        this.currentCart.splice(itemIndex, 1);
+                    }
+                    this.updateCartUI();
+                }
+            }
+
+            toggleCart() {
+                document.getElementById('cartSidebar').classList.toggle('open');
+            }
+
+            handleCheckout() {
+                if (this.currentCart.length === 0) {
+                    this.showToast('Cart is empty!', 'error');
+                    return;
+                }
+
+                const total = this.currentCart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+                const order = {
+                    id: `ORD-${Date.now()}`,
+                    date: new Date().toISOString(),
+                    items: [...this.currentCart],
+                    total: total,
+                    paymentMethod: 'cash'
+                };
+
+                this.orders.push(order);
+                this.sales.push({
+                    date: new Date().toISOString(),
+                    amount: total,
+                    items: this.currentCart
+                });
+
+                this.saveData();
+                this.currentCart = [];
+                this.updateCartUI();
+                this.toggleCart();
+                
+                this.showToast(`Order completed! Total: Rs. ${total}`, 'success');
+            }
+
+            // Advanced Backup System
+            exportData() {
+                const backup = {
+                    products: this.products,
+                    staff: this.staff,
+                    orders: this.orders,
+                    sales: this.sales,
+                    backupDate: new Date().toISOString(),
+                    version: '2.0'
+                };
+
+                const dataStr = JSON.stringify(backup, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `daily-delight-backup-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                this.showToast('Backup exported successfully!', 'success');
+                this.updateBackupStatus();
+            }
+
+            importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const backup = JSON.parse(e.target.result);
+                        
+                        if (confirm('This will replace all current data. Continue?')) {
+                            this.products = backup.products || this.getDefaultProducts();
+                            this.staff = backup.staff || this.getDefaultStaff();
+                            this.orders = backup.orders || [];
+                            this.sales = backup.sales || [];
+                            
+                            this.saveData();
+                            this.renderProducts();
+                            this.showToast('Data imported successfully!', 'success');
+                            this.updateBackupStatus();
+                        }
+                    } catch (error) {
+                        this.showToast('Invalid backup file!', 'error');
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = '';
+            }
+
+            toggleCloudBackup() {
+                this.cloudBackupEnabled = !this.cloudBackupEnabled;
+                const button = document.getElementById('enableCloudBackup');
+                button.textContent = this.cloudBackupEnabled ? 'Disable' : 'Enable';
+                button.className = `action-btn ${this.cloudBackupEnabled ? 'cancel-btn' : 'add-to-cart-btn'}`;
+                
+                this.showToast(`Cloud backup ${this.cloudBackupEnabled ? 'enabled' : 'disabled'}`, 'info');
+                this.updateBackupStatus();
+            }
+
+            setupAutoSync() {
+                this.showToast('Auto-sync setup coming soon!', 'info');
+            }
+
+            startAutoBackup() {
+                // Auto backup every 30 minutes
+                setInterval(() => {
+                    if (this.autoBackupEnabled) {
+                        this.saveData();
+                    }
+                }, 1800000);
+            }
+
+            updateBackupStatus() {
+                const statusText = document.getElementById('statusText');
+                const lastBackupInfo = document.getElementById('lastBackupInfo');
+                
+                let status = 'Ready';
+                if (this.cloudBackupEnabled) {
+                    status = '🟢 Cloud backup enabled';
+                } else if (this.autoBackupEnabled) {
+                    status = '🟡 Local backup only';
+                }
+                
+                statusText.textContent = status;
+                
+                const lastBackup = localStorage.getItem('dailyDelightLastBackup');
+                if (lastBackup) {
+                    const date = new Date(lastBackup);
+                    lastBackupInfo.textContent = `Last backup: ${date.toLocaleString()}`;
+                } else {
+                    lastBackupInfo.textContent = 'Last backup: Never';
+                }
+            }
+
+            saveData() {
+                localStorage.setItem('dailyDelightProducts', JSON.stringify(this.products));
+                localStorage.setItem('dailyDelightStaff', JSON.stringify(this.staff));
+                localStorage.setItem('dailyDelightOrders', JSON.stringify(this.orders));
+                localStorage.setItem('dailyDelightSales', JSON.stringify(this.sales));
+                localStorage.setItem('dailyDelightLastBackup', new Date().toISOString());
+                
+                this.updateBackupStatus();
+            }
+
+            showToast(message, type = 'info') {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: type === 'success' ? var(--success) : 
+                                   type === 'error' ? var(--accent) : 
+                                   type === 'info' ? var(--primary) : var(--warning),
+                    stopOnFocus: true,
+                }).showToast();
+            }
+        }
+
+        // Initialize the POS system when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new DailyDelightPOS();
+        });
     </script>
 </body>
 </html>
