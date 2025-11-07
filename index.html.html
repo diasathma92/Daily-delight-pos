@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Delight POS</title>
+    <title>Daily Delight POS - Fixed Image Display</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -1520,8 +1520,28 @@ alert('Data restored successfully!');
             filteredProducts.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                
+                // Check if product has an image URL or emoji
+                let imageContent;
+                if (product.image && product.image.startsWith('http')) {
+                    // It's a URL - use img tag
+                    imageContent = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-ice-cream\\'></i>';">`;
+                } else if (product.image) {
+                    // It's an emoji or icon class
+                    if (product.image.includes('fa-')) {
+                        // Font Awesome icon
+                        imageContent = `<i class="${product.image}"></i>`;
+                    } else {
+                        // Emoji
+                        imageContent = product.image;
+                    }
+                } else {
+                    // Default icon
+                    imageContent = '<i class="fas fa-ice-cream"></i>';
+                }
+                
                 productCard.innerHTML = `
-                    <div class="product-image">${product.image}</div>
+                    <div class="product-image">${imageContent}</div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
                         <div class="product-price">Rs. ${product.price.toFixed(2)}</div>
@@ -1538,8 +1558,28 @@ alert('Data restored successfully!');
             products.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                
+                // Check if product has an image URL or emoji
+                let imageContent;
+                if (product.image && product.image.startsWith('http')) {
+                    // It's a URL - use img tag
+                    imageContent = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-ice-cream\\'></i>';">`;
+                } else if (product.image) {
+                    // It's an emoji or icon class
+                    if (product.image.includes('fa-')) {
+                        // Font Awesome icon
+                        imageContent = `<i class="${product.image}"></i>`;
+                    } else {
+                        // Emoji
+                        imageContent = product.image;
+                    }
+                } else {
+                    // Default icon
+                    imageContent = '<i class="fas fa-ice-cream"></i>';
+                }
+                
                 productCard.innerHTML = `
-                    <div class="product-image">${product.image}</div>
+                    <div class="product-image">${imageContent}</div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
                         <div class="product-price">Rs. ${product.price.toFixed(2)}</div>
@@ -1806,7 +1846,15 @@ alert('Data restored successfully!');
             document.getElementById('productName').value = product.name;
             document.getElementById('productPrice').value = product.price;
             document.getElementById('productCategory').value = product.category;
-            document.getElementById('imagePreview').style.display = 'none';
+            
+            // Handle image preview
+            const imagePreview = document.getElementById('imagePreview');
+            if (product.image && product.image.startsWith('http')) {
+                imagePreview.src = product.image;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
             
             document.getElementById('cancelEdit').classList.remove('hidden');
         }
@@ -1826,6 +1874,7 @@ alert('Data restored successfully!');
             const name = document.getElementById('productName').value;
             const price = parseFloat(document.getElementById('productPrice').value);
             const category = document.getElementById('productCategory').value;
+            const imagePreview = document.getElementById('imagePreview');
             
             if (!name || !price) {
                 showToast('Please fill in all fields', 'error');
@@ -1839,6 +1888,11 @@ alert('Data restored successfully!');
                     products[productIndex].name = name;
                     products[productIndex].price = price;
                     products[productIndex].category = category;
+                    
+                    // Update image if a new one was uploaded
+                    if (imagePreview.style.display !== 'none') {
+                        products[productIndex].image = imagePreview.src;
+                    }
                 }
                 showToast('Product updated successfully', 'success');
             } else {
@@ -1848,7 +1902,7 @@ alert('Data restored successfully!');
                     name: name,
                     price: price,
                     category: category,
-                    image: '🍮' // Default icon
+                    image: imagePreview.style.display !== 'none' ? imagePreview.src : '🍮'
                 };
                 products.push(newProduct);
                 showToast('Product added successfully', 'success');
