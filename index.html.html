@@ -2,76 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Delight POS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
             --primary: #A67C52;
-            --primary-dark: #8B5A2B;
             --secondary: #FFEBB0;
             --accent: #D84A5B;
+            --light: #F5F5F5;
+            --dark: #333333;
             --success: #4CAF50;
             --warning: #FF9800;
-            --light: #F8F9FA;
-            --dark: #2C3E50;
-            --gray: #6C757D;
-            --border: #E0E0E0;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --radius: 15px;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, var(--secondary) 0%, #ffffff 100%);
             min-height: 100vh;
             color: var(--dark);
+            overflow-x: hidden;
         }
 
-        .app-container {
-            max-width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header */
-        .header {
-            background: var(--primary);
-            color: white;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 15px;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
         }
 
-        .header-content {
+        /* Header Styles */
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
 
         .logo i {
-            font-size: 2rem;
+            font-size: 2.5rem;
+            color: var(--primary);
         }
 
         .logo h1 {
-            font-size: 1.4rem;
+            font-size: 1.8rem;
+            color: var(--primary);
             font-weight: 700;
         }
 
@@ -79,99 +70,90 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 12px;
+            background: var(--light);
+            padding: 8px 15px;
             border-radius: 20px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            padding: 10px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px;
-            border: none;
-            background: none;
-            color: var(--gray);
-            font-size: 0.8rem;
-            transition: all 0.3s;
-        }
-
-        .nav-item.active {
+        .user-info i {
             color: var(--primary);
         }
 
-        .nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 4px;
-        }
-
-        /* Main Content */
+        /* Main Content Layout */
         .main-content {
-            flex: 1;
-            padding: 80px 15px 70px;
-            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        /* Products */
-        .categories-scroll {
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr 350px;
+            }
+        }
+
+        /* Categories */
+        .categories {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 20px;
-            padding: 10px 0;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            padding: 10px 0;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
         }
 
         .category-btn {
             padding: 12px 20px;
-            background: white;
-            border: 2px solid var(--border);
+            background: var(--light);
+            border: none;
             border-radius: 25px;
             font-weight: 600;
-            font-size: 0.9rem;
+            cursor: pointer;
             white-space: nowrap;
             transition: all 0.3s;
-            flex-shrink: 0;
+            box-shadow: var(--shadow);
+            font-size: 0.9rem;
         }
 
         .category-btn.active {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
 
+        /* Products Grid */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
+            gap: 15px;
             margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
         }
 
         .product-card {
             background: white;
-            border-radius: 15px;
+            border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: all 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
             position: relative;
         }
 
-        .product-card:active {
-            transform: scale(0.98);
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         .product-image {
@@ -180,7 +162,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            color: var(--primary);
+            font-size: 2.5rem;
             overflow: hidden;
         }
 
@@ -196,72 +179,75 @@
 
         .product-name {
             font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+            font-size: 1rem;
             line-height: 1.2;
         }
 
         .product-price {
             color: var(--primary);
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
-        .edit-product-btn {
+        .edit-product-btn, .delete-product-btn {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            right: 10px;
             background: rgba(255,255,255,0.9);
             border: none;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            cursor: pointer;
             opacity: 0;
             transition: opacity 0.3s;
+            z-index: 2;
         }
 
-        .product-card:hover .edit-product-btn {
+        .edit-product-btn {
+            top: 10px;
+        }
+
+        .delete-product-btn {
+            top: 50px;
+            color: var(--accent);
+        }
+
+        .product-card:hover .edit-product-btn,
+        .product-card:hover .delete-product-btn {
             opacity: 1;
         }
 
-        /* Cart */
-        .cart-sidebar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            height: 100%;
+        /* Cart Styles */
+        .cart-container {
             background: white;
-            z-index: 2000;
-            transition: right 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-sidebar.open {
-            right: 0;
-        }
-
-        .cart-header {
+            border-radius: var(--radius);
             padding: 20px;
-            background: var(--primary);
-            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-title {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
 
-        .cart-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
+        .cart-title h2 {
+            color: var(--primary);
         }
 
         .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
             margin-bottom: 20px;
         }
 
@@ -269,22 +255,24 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .item-details {
-            flex: 1;
+            flex-grow: 1;
+            max-width: 60%;
         }
 
         .item-name {
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
         }
 
         .item-modifiers {
             font-size: 0.8rem;
-            color: var(--gray);
+            color: #777;
         }
 
         .item-controls {
@@ -294,15 +282,24 @@
         }
 
         .quantity-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             border: none;
             background: var(--light);
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             font-weight: bold;
+        }
+
+        .quantity-btn.decrease {
+            color: var(--accent);
+        }
+
+        .quantity-btn.increase {
+            color: var(--success);
         }
 
         .item-quantity {
@@ -319,10 +316,8 @@
         }
 
         .cart-summary {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: auto;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
         }
 
         .summary-row {
@@ -333,85 +328,288 @@
 
         .total {
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: var(--primary);
-            border-top: 1px dashed var(--border);
+            border-top: 1px dashed #ddd;
             padding-top: 10px;
             margin-top: 10px;
         }
 
         .checkout-btn {
             width: 100%;
-            padding: 16px;
+            padding: 15px;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 1.1rem;
             font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background: #8c6840;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin-top: 15px;
         }
 
-        .fab {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: var(--shadow-lg);
-            z-index: 999;
+        .payment-btn {
+            padding: 12px;
+            background: var(--light);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9rem;
         }
 
-        .cart-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
+        .payment-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Modifiers Panel */
+        .modifiers-panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .modifiers-panel.active {
+            display: block;
+        }
+
+        .modifier-group {
+            margin-bottom: 20px;
+        }
+
+        .modifier-group h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .modifier-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .modifier-option {
+            padding: 8px 15px;
+            background: var(--light);
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .modifier-option.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .modifier-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: var(--light);
+        }
+
+        .add-to-cart-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .delete-btn {
             background: var(--accent);
             color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
+        }
+
+        /* Receipt */
+        .receipt {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .receipt.active {
+            display: block;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .receipt-items {
+            margin-bottom: 20px;
+        }
+
+        .receipt-item {
             display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .receipt-total {
+            border-top: 1px dashed #000;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .receipt-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Overlay for modals */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 700;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        .pin-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .pin-btn {
+            padding: 15px;
+            background: var(--light);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .pin-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .pin-display {
+            font-size: 2rem;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            padding: 10px;
+            background: var(--light);
+            border-radius: 10px;
         }
 
         /* Admin Panel */
         .admin-panel {
             background: white;
-            border-radius: 15px;
+            border-radius: var(--radius);
             padding: 20px;
-            margin: 20px 0;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
         }
 
         .admin-tabs {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 20px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .admin-tab {
-            padding: 12px 20px;
+            padding: 10px 20px;
             background: var(--light);
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
-            white-space: nowrap;
             transition: all 0.3s;
+            font-size: 0.9rem;
         }
 
         .admin-tab.active {
@@ -427,7 +625,13 @@
             display: block;
         }
 
-        /* Forms */
+        .product-form {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -438,87 +642,108 @@
             font-weight: 600;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 1rem;
         }
 
         .form-actions {
             display: flex;
             gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .sales-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .summary-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+            font-size: 0.9rem;
         }
 
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+        .sales-table th, .sales-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
 
-        .btn-primary {
+        .sales-table th {
             background: var(--primary);
             color: white;
         }
 
-        .btn-secondary {
+        .sales-table tr:hover {
+            background: var(--light);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #8c6840;
+        }
+
+        .nav-btn.secondary {
             background: var(--light);
             color: var(--dark);
         }
 
-        .btn-danger {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Backup System */
-        .backup-section {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .backup-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .backup-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .backup-card i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-
-        /* Staff List */
+        /* Staff Management */
         .staff-list {
             margin-top: 20px;
         }
 
         .staff-card {
-            background: white;
+            background: var(--light);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow);
+            flex-wrap: wrap;
         }
 
         .staff-info h4 {
@@ -531,155 +756,215 @@
             gap: 10px;
         }
 
-        /* PIN System */
-        .pin-system {
+        /* Image Upload */
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 20px;
             text-align: center;
-        }
-
-        .pin-display {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        .pin-circle {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid #A67C52;
-            transition: all 0.3s ease;
-        }
-
-        .pin-circle.filled {
-            background: #A67C52;
-            transform: scale(1.2);
-        }
-
-        .pin-keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-
-        .pin-key {
-            aspect-ratio: 1;
-            border: none;
-            border-radius: 50%;
-            background: #f0f0f0;
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: border-color 0.3s;
+            margin-bottom: 15px;
         }
 
-        .pin-key:active {
-            background: #A67C52;
-            color: white;
-            transform: scale(0.9);
+        .image-upload:hover {
+            border-color: var(--primary);
         }
 
-        .pin-action {
-            aspect-ratio: 1;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        .image-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
         }
 
-        .clear-btn {
-            background: #D84A5B;
-            color: white;
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
         }
 
-        .submit-btn {
-            background: #4CAF50;
-            color: white;
-        }
-
+        /* Utility Classes */
         .hidden {
-            display: none !important;
+            display: none;
+        }
+
+        .currency {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--dark);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--accent);
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        /* Backup Section */
+        .backup-section {
+            margin-top: 30px;
+            border-top: 2px solid var(--primary);
+            padding-top: 20px;
+        }
+
+        .backup-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         @media (min-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            .backup-grid {
+                grid-template-columns: 1fr 1fr;
             }
-            .cart-sidebar {
-                width: 400px;
-            }
+        }
+
+        .backup-card {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .backup-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .backup-info {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #666;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .backup-actions button {
+            flex: 1;
+        }
+
+        .emergency-commands {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .emergency-commands code {
+            background: white;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Login Screen -->
-        <div class="login-screen" id="loginScreen">
-            <div class="login-box">
-                <div class="logo" style="justify-content: center; margin-bottom: 30px;">
-                    <i class="fas fa-stroopwafel"></i>
-                    <h1>Daily Delight POS</h1>
-                </div>
-                <p style="margin-bottom: 20px; color: var(--gray);">Enter your PIN to continue</p>
-                
-                <div class="pin-system">
-                    <div class="pin-display" id="pinDisplay">
-                        <div class="pin-circle" data-index="0"></div>
-                        <div class="pin-circle" data-index="1"></div>
-                        <div class="pin-circle" data-index="2"></div>
-                        <div class="pin-circle" data-index="3"></div>
-                    </div>
-
-                    <div class="pin-keypad">
-                        <button class="pin-key" data-digit="1">1</button>
-                        <button class="pin-key" data-digit="2">2</button>
-                        <button class="pin-key" data-digit="3">3</button>
-                        <button class="pin-key" data-digit="4">4</button>
-                        <button class="pin-key" data-digit="5">5</button>
-                        <button class="pin-key" data-digit="6">6</button>
-                        <button class="pin-key" data-digit="7">7</button>
-                        <button class="pin-key" data-digit="8">8</button>
-                        <button class="pin-key" data-digit="9">9</button>
-                        <button class="pin-action clear-btn" id="clearPin">
-                            <i class="fas fa-undo"></i>
-                        </button>
-                        <button class="pin-key" data-digit="0">0</button>
-                        <button class="pin-action submit-btn" id="submitPin">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </div>
-                </div>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="logo">
+                <i class="fas fa-stroopwafel"></i>
+                <h1>Daily Delight POS</h1>
+            </div>
+            <p>Enter your PIN to continue</p>
+            <div class="pin-display" id="pinDisplay">____</div>
+            <div class="pin-pad">
+                <button class="pin-btn" data-digit="1">1</button>
+                <button class="pin-btn" data-digit="2">2</button>
+                <button class="pin-btn" data-digit="3">3</button>
+                <button class="pin-btn" data-digit="4">4</button>
+                <button class="pin-btn" data-digit="5">5</button>
+                <button class="pin-btn" data-digit="6">6</button>
+                <button class="pin-btn" data-digit="7">7</button>
+                <button class="pin-btn" data-digit="8">8</button>
+                <button class="pin-btn" data-digit="9">9</button>
+                <button class="pin-btn" data-digit="0">0</button>
+                <button class="pin-btn" id="clearPin">C</button>
+                <button class="pin-btn" id="submitPin">↵</button>
             </div>
         </div>
+    </div>
 
-        <!-- Main App -->
-        <div class="main-app hidden" id="mainApp">
-            <header class="header">
-                <div class="header-content">
-                    <div class="logo">
-                        <i class="fas fa-stroopwafel"></i>
-                        <h1>Daily Delight</h1>
-                    </div>
-                    <div class="user-info">
-                        <i class="fas fa-user"></i>
-                        <span id="userName">Staff</span>
-                    </div>
-                </div>
-            </header>
+    <!-- Main POS Interface -->
+    <div class="container hidden" id="posInterface">
+        <header>
+            <div class="logo">
+                <i class="fas fa-stroopwafel"></i>
+                <h1>Daily Delight</h1>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user"></i>
+                <span id="userName">Staff User</span>
+                <button class="action-btn cancel-btn" id="logoutBtn" style="margin-left: 10px; padding: 5px 10px;">Logout</button>
+            </div>
+        </header>
 
-            <main class="main-content">
-                <!-- POS System -->
-                <div id="posSystem">
-                    <div class="categories-scroll">
-                        <button class="category-btn active" data-category="all">All</button>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="posBtn">POS System</button>
+            <button class="nav-btn secondary" id="adminBtn">Admin Panel</button>
+        </div>
+
+        <!-- POS System -->
+        <div id="posSystem">
+            <div class="main-content">
+                <div class="products-section">
+                    <div class="categories">
+                        <button class="category-btn active" data-category="all">All Puddings</button>
                         <button class="category-btn" data-category="classic">Classic</button>
                         <button class="category-btn" data-category="chocolate">Chocolate</button>
                         <button class="category-btn" data-category="fruity">Fruity</button>
@@ -687,433 +972,1195 @@
                     </div>
 
                     <div class="products-grid" id="productsGrid">
-                        <!-- Products loaded here -->
+                        <!-- Products will be dynamically inserted here -->
                     </div>
                 </div>
 
-                <!-- Admin Panel -->
-                <div class="admin-panel hidden" id="adminPanel">
-                    <div class="admin-tabs">
-                        <button class="admin-tab active" data-tab="products">Products</button>
-                        <button class="admin-tab" data-tab="staff">Staff</button>
-                        <button class="admin-tab" data-tab="backup">Backup</button>
-                        <button class="admin-tab" data-tab="reports">Reports</button>
+                <div class="cart-container">
+                    <div class="cart-title">
+                        <h2>Current Order</h2>
+                        <span id="orderNumber">#ORD-001</span>
                     </div>
-
-                    <!-- Products Management -->
-                    <div class="admin-content active" id="productsTab">
-                        <div class="form-group">
-                            <h3 id="productFormTitle">Add New Product</h3>
-                            <input type="text" id="productName" placeholder="Product Name" class="form-control">
-                            <input type="number" id="productPrice" placeholder="Price (LKR)" class="form-control">
-                            <select id="productCategory" class="form-control">
-                                <option value="classic">Classic</option>
-                                <option value="chocolate">Chocolate</option>
-                                <option value="fruity">Fruity</option>
-                                <option value="seasonal">Seasonal</option>
-                            </select>
-                            <div class="form-actions">
-                                <button class="btn btn-secondary" id="cancelProduct">Cancel</button>
-                                <button class="btn btn-primary" id="saveProduct">Save Product</button>
-                            </div>
-                        </div>
-
-                        <div class="products-grid" id="adminProductsGrid">
-                            <!-- Admin products view -->
-                        </div>
-                    </div>
-
-                    <!-- Staff Management -->
-                    <div class="admin-content" id="staffTab">
-                        <div class="form-group">
-                            <h3>Add Staff Member</h3>
-                            <input type="text" id="staffName" placeholder="Staff Name" class="form-control">
-                            <input type="password" id="staffPin" placeholder="4-digit PIN" maxlength="4" class="form-control">
-                            <select id="staffRole" class="form-control">
-                                <option value="staff">Staff</option>
-                                <option value="manager">Manager</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                            <div class="form-actions">
-                                <button class="btn btn-primary" id="addStaff">Add Staff</button>
-                            </div>
-                        </div>
-
-                        <div class="staff-list" id="staffList">
-                            <!-- Staff members list -->
-                        </div>
-                    </div>
-
-                    <!-- Backup System -->
-                    <div class="admin-content" id="backupTab">
-                        <div class="backup-section">
-                            <h3>📦 Advanced Backup System</h3>
-                            <div class="backup-grid">
-                                <div class="backup-card">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <h4>Cloud Backup</h4>
-                                    <p>Auto-save to cloud</p>
-                                    <button class="btn btn-primary" id="enableCloudBackup">Enable</button>
-                                </div>
-                                <div class="backup-card">
-                                    <i class="fas fa-file-export"></i>
-                                    <h4>Export Data</h4>
-                                    <p>Download backup file</p>
-                                    <button class="btn btn-primary" id="exportData">Export</button>
-                                </div>
-                                <div class="backup-card">
-                                    <i class="fas fa-file-import"></i>
-                                    <h4>Import Data</h4>
-                                    <p>Restore from backup</p>
-                                    <input type="file" id="importFile" accept=".json" style="display: none;">
-                                    <button class="btn btn-secondary" id="importData">Import</button>
-                                </div>
-                                <div class="backup-card">
-                                    <i class="fas fa-sync"></i>
-                                    <h4>Auto Sync</h4>
-                                    <p>Sync across devices</p>
-                                    <button class="btn btn-secondary" id="setupSync">Setup</button>
-                                </div>
-                            </div>
-                            <div id="backupStatus" style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
-                                <strong>Status:</strong> <span id="statusText">Ready</span>
-                                <div id="lastBackupInfo" style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Reports -->
-                    <div class="admin-content" id="reportsTab">
-                        <h3>Sales Reports</h3>
-                        <p>Detailed sales analytics and reports coming soon...</p>
-                    </div>
-                </div>
-            </main>
-
-            <!-- Cart Sidebar -->
-            <div class="cart-sidebar" id="cartSidebar">
-                <div class="cart-header">
-                    <h2>Current Order</h2>
-                    <button class="close-cart" style="background: none; border: none; color: white; font-size: 1.5rem;">✕</button>
-                </div>
-                <div class="cart-content">
                     <div class="cart-items" id="cartItems">
-                        <div style="text-align: center; color: var(--gray); padding: 40px 20px;">
-                            <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                            <p>Your cart is empty</p>
-                        </div>
+                        <!-- Cart items will be dynamically inserted here -->
+                        <div class="empty-cart-message">Your cart is empty</div>
                     </div>
                     <div class="cart-summary">
                         <div class="summary-row total">
                             <span>Total:</span>
-                            <span id="totalAmount">Rs. 0.00</span>
+                            <span id="total">Rs. 0.00</span>
                         </div>
-                        <button class="checkout-btn" id="checkoutBtn">
-                            <i class="fas fa-credit-card"></i> Checkout
-                        </button>
+                    </div>
+                    <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+
+                    <div class="payment-methods hidden" id="paymentMethods">
+                        <button class="payment-btn" data-method="cash">Cash</button>
+                        <button class="payment-btn" data-method="card">Card</button>
+                        <button class="payment-btn" data-method="mobile">Mobile</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Floating Action Button -->
-            <button class="fab" id="cartFab">
-                <i class="fas fa-shopping-cart"></i>
-                <div class="cart-badge" id="cartBadge">0</div>
-            </button>
+            <div class="receipt" id="receipt">
+                <div class="receipt-header">
+                    <h2>Daily Delight</h2>
+                    <p>Thank you for your order!</p>
+                </div>
+                <div class="receipt-items" id="receiptItems">
+                    <!-- Receipt items will be dynamically inserted here -->
+                </div>
+                <div class="receipt-total">
+                    <span>Total:</span>
+                    <span id="receiptTotal">Rs. 0.00</span>
+                </div>
+                <div class="receipt-actions">
+                    <button class="action-btn cancel-btn" id="newOrder">New Order</button>
+                    <button class="action-btn add-to-cart-btn" id="printReceipt">Print Receipt</button>
+                </div>
+            </div>
+        </div>
 
-            <!-- Bottom Navigation -->
-            <nav class="bottom-nav">
-                <button class="nav-item active" data-page="pos">
-                    <i class="fas fa-home"></i>
-                    <span>POS</span>
-                </button>
-                <button class="nav-item" data-page="orders">
-                    <i class="fas fa-receipt"></i>
-                    <span>Orders</span>
-                </button>
-                <button class="nav-item" data-page="admin">
-                    <i class="fas fa-cog"></i>
-                    <span>Admin</span>
-                </button>
-                <button class="nav-item" data-page="reports">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports</span>
-                </button>
-            </nav>
+        <!-- Admin Panel -->
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="products">Manage Products</button>
+                <button class="admin-tab" data-tab="staff">Staff Management</button>
+                <button class="admin-tab" data-tab="sales">Sales Summary</button>
+                <button class="admin-tab" data-tab="backup">Data Backup</button>
+            </div>
+
+            <!-- Products Management -->
+            <div class="admin-content active" id="productsTab">
+                <div class="product-form">
+                    <h3 id="formTitle">Add New Product</h3>
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" placeholder="Enter product name">
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Price (LKR)</label>
+                        <input type="number" id="productPrice" step="1" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Category</label>
+                        <select id="productCategory">
+                            <option value="classic">Classic</option>
+                            <option value="chocolate">Chocolate</option>
+                            <option value="fruity">Fruity</option>
+                            <option value="seasonal">Seasonal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Product Image</label>
+                        <div class="image-upload" id="imageUpload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload product image</p>
+                            <input type="file" id="productImage" accept="image/*" style="display: none;">
+                            <img id="imagePreview" class="image-preview" alt="Image preview">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="action-btn cancel-btn" id="cancelEdit">Cancel</button>
+                        <button class="action-btn add-to-cart-btn" id="saveProduct">Save Product</button>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="adminProductsGrid">
+                    <!-- Admin products will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Staff Management -->
+            <div class="admin-content" id="staffTab">
+                <div class="product-form">
+                    <h3>Add Staff Member</h3>
+                    <div class="form-group">
+                        <label for="staffName">Staff Name</label>
+                        <input type="text" id="staffName" placeholder="Enter staff name">
+                    </div>
+                    <div class="form-group">
+                        <label for="staffPin">PIN (4 digits)</label>
+                        <input type="password" id="staffPin" maxlength="4" placeholder="Enter 4-digit PIN">
+                    </div>
+                    <div class="form-group">
+                        <label for="staffRole">Role</label>
+                        <select id="staffRole">
+                            <option value="staff">Staff</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="action-btn add-to-cart-btn" id="addStaff">Add Staff</button>
+                    </div>
+                </div>
+
+                <div class="staff-list" id="staffList">
+                    <!-- Staff members will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Sales Summary -->
+            <div class="admin-content" id="salesTab">
+                <div class="sales-summary">
+                    <div class="summary-card">
+                        <h3>Today's Revenue</h3>
+                        <div class="value" id="todayRevenue">Rs. 0.00</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Today's Orders</h3>
+                        <div class="value" id="todayOrders">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Average Order Value</h3>
+                        <div class="value" id="avgOrderValue">Rs. 0.00</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Best Selling Product</h3>
+                        <div class="value" id="bestSeller">-</div>
+                    </div>
+                </div>
+
+                <h3>Recent Orders</h3>
+                <table class="sales-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Time</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentOrders">
+                        <!-- Recent orders will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Data Backup -->
+            <div class="admin-content" id="backupTab">
+                <div class="backup-section">
+                    <h3>💾 Data Backup & Restore</h3>
+                    <p style="color: var(--accent); margin-bottom: 15px;">
+                        ⚠️ <strong>WARNING:</strong> All data is stored in browser only. Backup regularly!
+                    </p>
+                    
+                    <div class="backup-grid">
+                        <div class="backup-card">
+                            <h4><i class="fas fa-download"></i> Export Backup</h4>
+                            <p>Download all data as JSON file</p>
+                            <div class="backup-actions">
+                                <button class="action-btn add-to-cart-btn" id="exportData">
+                                    <i class="fas fa-download"></i> Export All Data
+                                </button>
+                            </div>
+                            <div class="backup-info" id="exportInfo">
+                                Last export: Never
+                            </div>
+                        </div>
+                        
+                        <div class="backup-card">
+                            <h4><i class="fas fa-upload"></i> Import Backup</h4>
+                            <p>Restore from previous backup</p>
+                            <div class="backup-actions">
+                                <input type="file" id="importFile" accept=".json" style="display: none;">
+                                <button class="action-btn cancel-btn" id="importData">
+                                    <i class="fas fa-upload"></i> Import Backup
+                                </button>
+                            </div>
+                            <div class="backup-info" id="importInfo">
+                                Last import: Never
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="backup-card">
+                        <h4><i class="fas fa-save"></i> Auto Backup Settings</h4>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+                            <label>
+                                <input type="checkbox" id="autoBackupToggle"> Enable Auto Backup
+                            </label>
+                            <select id="backupInterval">
+                                <option value="300000">Every 5 minutes</option>
+                                <option value="1800000">Every 30 minutes</option>
+                                <option value="3600000">Every 1 hour</option>
+                                <option value="86400000">Every 24 hours</option>
+                            </select>
+                        </div>
+                        <div class="backup-actions">
+                            <button class="action-btn cancel-btn" id="backupNow">
+                                <i class="fas fa-save"></i> Create Backup Now
+                            </button>
+                        </div>
+                        <div class="backup-info" id="lastBackupInfo">
+                            Last backup: Never
+                        </div>
+                    </div>
+
+                    <div class="emergency-commands">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Emergency Backup Commands</h4>
+                        <p>Copy and paste in browser console (F12):</p>
+                        <code>
+// Quick export to clipboard<br>
+copy(JSON.stringify({<br>
+&nbsp;&nbsp;products: JSON.parse(localStorage.getItem('dailyDelightProducts')),<br>
+&nbsp;&nbsp;sales: JSON.parse(localStorage.getItem('dailyDelightSales')),<br>
+&nbsp;&nbsp;orders: JSON.parse(localStorage.getItem('dailyDelightOrders')),<br>
+&nbsp;&nbsp;staff: JSON.parse(localStorage.getItem('dailyDelightStaff')),<br>
+&nbsp;&nbsp;backupDate: new Date().toISOString()<br>
+}, null, 2))<br><br>
+
+// Quick import from clipboard<br>
+// First copy backup data to clipboard, then run:<br>
+const backupData = JSON.parse(prompt("Paste backup data here:"));<br>
+Object.keys(backupData).forEach(key => {<br>
+&nbsp;&nbsp;if (key !== 'backupDate') localStorage.setItem('dailyDelight' + key.charAt(0).toUpperCase() + key.slice(1), JSON.stringify(backupData[key]));<br>
+});<br>
+alert('Data restored successfully!');
+                        </code>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+    <!-- Modifiers Panel -->
+    <div class="modifiers-panel" id="modifiersPanel">
+        <h2 id="modifierProductName">Product Name</h2>
+        <div class="modifier-group">
+            <h3>Size</h3>
+            <div class="modifier-options">
+                <div class="modifier-option active" data-modifier="size" data-value="regular">Regular</div>
+                <div class="modifier-option" data-modifier="size" data-value="large">Large (+Rs. 100)</div>
+            </div>
+        </div>
+        <div class="modifier-group">
+            <h3>Toppings</h3>
+            <div class="modifier-options">
+                <div class="modifier-option" data-modifier="topping" data-value="whipped-cream">Whipped Cream (+Rs. 50)</div>
+                <div class="modifier-option" data-modifier="topping" data-value="nuts">Nuts (+Rs. 75)</div>
+                <div class="modifier-option" data-modifier="topping" data-value="chocolate-sauce">Chocolate Sauce (+Rs. 60)</div>
+                <div class="modifier-option" data-modifier="topping" data-value="caramel">Caramel (+Rs. 70)</div>
+            </div>
+        </div>
+        <div class="modifier-group">
+            <h3>Special Instructions</h3>
+            <div class="form-group">
+                <textarea id="specialInstructions" placeholder="Add any special instructions here..."></textarea>
+            </div>
+        </div>
+        <div class="modifier-actions">
+            <button class="action-btn cancel-btn" id="cancelModifiers">Cancel</button>
+            <button class="action-btn add-to-cart-btn" id="addToCart">Add to Order</button>
+        </div>
+    </div>
+
+    <!-- Overlay for modals -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Toast Notifications -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        // COMPLETE MOBILE POS SYSTEM
-        class DailyDelightPOS {
-            constructor() {
-                this.products = JSON.parse(localStorage.getItem('dailyDelightProducts')) || this.getDefaultProducts();
-                this.staff = JSON.parse(localStorage.getItem('dailyDelightStaff')) || this.getDefaultStaff();
-                this.orders = JSON.parse(localStorage.getItem('dailyDelightOrders')) || [];
-                this.sales = JSON.parse(localStorage.getItem('dailyDelightSales')) || [];
-                
-                this.currentCart = [];
-                this.currentUser = null;
-                this.pinInput = "";
-                this.editingProductId = null;
-                this.cloudBackupEnabled = false;
-                
-                this.init();
+        // Data Models
+        let products = [];
+        let cart = [];
+        let orders = [];
+        let staff = [];
+        let sales = [];
+        let currentUser = null;
+        let currentOrderId = 1;
+        let editingProductId = null;
+        let selectedProduct = null;
+        let autoBackupInterval = null;
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const posInterface = document.getElementById('posInterface');
+        const pinDisplay = document.getElementById('pinDisplay');
+        const productsGrid = document.getElementById('productsGrid');
+        const adminProductsGrid = document.getElementById('adminProductsGrid');
+        const cartItems = document.getElementById('cartItems');
+        const total = document.getElementById('total');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const paymentMethods = document.getElementById('paymentMethods');
+        const receipt = document.getElementById('receipt');
+        const receiptItems = document.getElementById('receiptItems');
+        const receiptTotal = document.getElementById('receiptTotal');
+        const modifiersPanel = document.getElementById('modifiersPanel');
+        const overlay = document.getElementById('overlay');
+        const adminPanel = document.getElementById('adminPanel');
+        const posSystem = document.getElementById('posSystem');
+        const staffList = document.getElementById('staffList');
+        const recentOrders = document.getElementById('recentOrders');
+        const toast = document.getElementById('toast');
+
+        // Initialize the application
+        function init() {
+            loadData();
+            setupEventListeners();
+            renderProducts();
+            renderAdminProducts();
+            renderStaffList();
+            updateSalesSummary();
+            setupBackupSystem();
+            
+            // Check if we have staff, if not create default admin
+            if (staff.length === 0) {
+                createDefaultAdmin();
             }
+        }
 
-            getDefaultProducts() {
-                return [
-                    { id: 1, name: "Classic Vanilla", price: 599, category: "classic", icon: "fas fa-ice-cream" },
-                    { id: 2, name: "Chocolate Dream", price: 649, category: "chocolate", icon: "fas fa-cookie" },
-                    { id: 3, name: "Caramel Swirl", price: 699, category: "classic", icon: "fas fa-candy-cane" },
-                    { id: 4, name: "Strawberry Bliss", price: 599, category: "fruity", icon: "fas fa-stroopwafel" },
-                    { id: 5, name: "Mango Tango", price: 649, category: "fruity", icon: "fas fa-lemon" },
-                    { id: 6, name: "Cookies & Cream", price: 699, category: "chocolate", icon: "fas fa-cookie-bite" }
-                ];
+        // Load data from localStorage
+        function loadData() {
+            products = JSON.parse(localStorage.getItem('dailyDelightProducts')) || getDefaultProducts();
+            cart = JSON.parse(localStorage.getItem('dailyDelightCart')) || [];
+            orders = JSON.parse(localStorage.getItem('dailyDelightOrders')) || [];
+            staff = JSON.parse(localStorage.getItem('dailyDelightStaff')) || [];
+            sales = JSON.parse(localStorage.getItem('dailyDelightSales')) || [];
+            
+            // Set current order ID
+            if (orders.length > 0) {
+                currentOrderId = Math.max(...orders.map(o => o.id)) + 1;
             }
+        }
 
-            getDefaultStaff() {
-                return [
-                    { id: 1, name: "Admin", pin: "9999", role: "admin" },
-                    { id: 2, name: "Manager", pin: "8888", role: "manager" },
-                    { id: 3, name: "Staff", pin: "1234", role: "staff" }
-                ];
-            }
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('dailyDelightProducts', JSON.stringify(products));
+            localStorage.setItem('dailyDelightCart', JSON.stringify(cart));
+            localStorage.setItem('dailyDelightOrders', JSON.stringify(orders));
+            localStorage.setItem('dailyDelightStaff', JSON.stringify(staff));
+            localStorage.setItem('dailyDelightSales', JSON.stringify(sales));
+        }
 
-            init() {
-                this.setupEventListeners();
-                this.renderProducts();
-                this.renderAdminProducts();
-                this.renderStaffList();
-                this.updateBackupStatus();
-            }
+        // Setup default products
+        function getDefaultProducts() {
+            return [
+                { id: 1, name: "Classic Vanilla Pudding", price: 450, category: "classic", image: "🍮" },
+                { id: 2, name: "Chocolate Fudge Pudding", price: 550, category: "chocolate", image: "🍫" },
+                { id: 3, name: "Strawberry Delight", price: 500, category: "fruity", image: "🍓" },
+                { id: 4, name: "Caramel Swirl Pudding", price: 520, category: "classic", image: "🍯" },
+                { id: 5, name: "Mango Passion Pudding", price: 480, category: "fruity", image: "🥭" },
+                { id: 6, name: "Double Chocolate Pudding", price: 580, category: "chocolate", image: "🍫" },
+                { id: 7, name: "Pumpkin Spice Pudding", price: 530, category: "seasonal", image: "🎃" },
+                { id: 8, name: "Coconut Dream Pudding", price: 470, category: "classic", image: "🥥" }
+            ];
+        }
 
-            setupEventListeners() {
-                // PIN System
-                document.querySelectorAll('.pin-key[data-digit]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        if (this.pinInput.length < 4) {
-                            this.pinInput += e.target.dataset.digit;
-                            this.updatePinDisplay();
-                        }
-                    });
-                });
+        // Create default admin account
+        function createDefaultAdmin() {
+            const defaultAdmin = {
+                id: 1,
+                name: "Admin User",
+                pin: "1234",
+                role: "admin"
+            };
+            staff.push(defaultAdmin);
+            saveData();
+        }
 
-                document.getElementById('clearPin').addEventListener('click', () => {
-                    this.pinInput = "";
-                    this.updatePinDisplay();
-                });
-
-                document.getElementById('submitPin').addEventListener('click', () => {
-                    this.handleLogin();
-                });
-
-                // Navigation
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        this.handleNavigation(e.target.closest('.nav-item').dataset.page);
-                    });
-                });
-
-                // Categories
-                document.querySelectorAll('.category-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.renderProducts(e.target.dataset.category);
-                    });
-                });
-
-                // Cart
-                document.getElementById('cartFab').addEventListener('click', () => {
-                    this.toggleCart();
-                });
-
-                document.querySelector('.close-cart').addEventListener('click', () => {
-                    this.toggleCart();
-                });
-
-                // Checkout
-                document.getElementById('checkoutBtn').addEventListener('click', () => {
-                    this.handleCheckout();
-                });
-
-                // Admin Tabs
-                document.querySelectorAll('.admin-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-                        document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
-                        e.target.classList.add('active');
-                        document.getElementById(e.target.dataset.tab + 'Tab').classList.add('active');
-                    });
-                });
-
-                // Product Management
-                document.getElementById('saveProduct').addEventListener('click', () => {
-                    this.saveProduct();
-                });
-
-                document.getElementById('cancelProduct').addEventListener('click', () => {
-                    this.cancelProductEdit();
-                });
-
-                // Staff Management
-                document.getElementById('addStaff').addEventListener('click', () => {
-                    this.addStaff();
-                });
-
-                // Backup System
-                document.getElementById('exportData').addEventListener('click', () => {
-                    this.exportData();
-                });
-
-                document.getElementById('importData').addEventListener('click', () => {
-                    document.getElementById('importFile').click();
-                });
-
-                document.getElementById('importFile').addEventListener('change', (e) => {
-                    this.importData(e);
-                });
-
-                document.getElementById('enableCloudBackup').addEventListener('click', () => {
-                    this.toggleCloudBackup();
-                });
-
-                // Keyboard support
-                document.addEventListener('keydown', (e) => {
-                    if (e.key >= '0' && e.key <= '9' && this.pinInput.length < 4) {
-                        this.pinInput += e.key;
-                        this.updatePinDisplay();
-                    } else if (e.key === 'Backspace') {
-                        this.pinInput = this.pinInput.slice(0, -1);
-                        this.updatePinDisplay();
-                    } else if (e.key === 'Enter') {
-                        this.handleLogin();
-                    }
-                });
-            }
-
-            // PIN System
-            updatePinDisplay() {
-                const circles = document.querySelectorAll('.pin-circle');
-                circles.forEach((circle, index) => {
-                    circle.classList.toggle('filled', index < this.pinInput.length);
-                });
-            }
-
-            handleLogin() {
-                const staffMember = this.staff.find(s => s.pin === this.pinInput);
-                if (staffMember) {
-                    this.currentUser = staffMember;
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    document.getElementById('userName').textContent = staffMember.name;
-                    
-                    // Hide admin tab for non-admin users
-                    if (staffMember.role !== 'admin') {
-                        document.querySelector('[data-page="admin"]').style.display = 'none';
-                    }
-                    
-                    this.showToast(`Welcome, ${staffMember.name}!`, 'success');
-                    this.pinInput = "";
-                    this.updatePinDisplay();
-                } else {
-                    this.showToast('Invalid PIN! Try 1234 (Staff) or 9999 (Admin)', 'error');
-                    this.pinInput = "";
-                    this.updatePinDisplay();
-                }
-            }
-
+        // Setup event listeners
+        function setupEventListeners() {
+            // PIN login
+            document.querySelectorAll('.pin-btn').forEach(btn => {
+                btn.addEventListener('click', handlePinInput);
+            });
+            
+            document.getElementById('clearPin').addEventListener('click', clearPin);
+            document.getElementById('submitPin').addEventListener('click', submitPin);
+            
             // Navigation
-            handleNavigation(page) {
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            document.getElementById('posBtn').addEventListener('click', showPosSystem);
+            document.getElementById('adminBtn').addEventListener('click', showAdminPanel);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Categories
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', handleCategoryClick);
+            });
+            
+            // Cart and checkout
+            checkoutBtn.addEventListener('click', startCheckout);
+            document.getElementById('newOrder').addEventListener('click', startNewOrder);
+            document.getElementById('printReceipt').addEventListener('click', printReceipt);
+            
+            // Payment methods
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.addEventListener('click', handlePaymentMethod);
+            });
+            
+            // Modifiers panel
+            document.getElementById('cancelModifiers').addEventListener('click', closeModifiers);
+            document.getElementById('addToCart').addEventListener('click', addProductToCart);
+            
+            // Admin tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', handleAdminTabClick);
+            });
+            
+            // Product form
+            document.getElementById('saveProduct').addEventListener('click', saveProduct);
+            document.getElementById('cancelEdit').addEventListener('click', cancelEdit);
+            
+            // Staff form
+            document.getElementById('addStaff').addEventListener('click', addStaff);
+            
+            // Image upload
+            document.getElementById('imageUpload').addEventListener('click', () => {
+                document.getElementById('productImage').click();
+            });
+            document.getElementById('productImage').addEventListener('change', handleImageUpload);
+            
+            // Backup system
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('importData').addEventListener('click', () => {
+                document.getElementById('importFile').click();
+            });
+            document.getElementById('importFile').addEventListener('change', importData);
+            document.getElementById('backupNow').addEventListener('click', createBackup);
+            document.getElementById('autoBackupToggle').addEventListener('change', toggleAutoBackup);
+            
+            // Overlay click to close modals
+            overlay.addEventListener('click', () => {
+                closeModifiers();
+                overlay.classList.remove('active');
+            });
+        }
+
+        // PIN handling
+        let enteredPin = '';
+        
+        function handlePinInput(e) {
+            const digit = e.target.getAttribute('data-digit');
+            if (digit && enteredPin.length < 4) {
+                enteredPin += digit;
+                updatePinDisplay();
+            }
+        }
+        
+        function clearPin() {
+            enteredPin = '';
+            updatePinDisplay();
+        }
+        
+        function updatePinDisplay() {
+            let display = '';
+            for (let i = 0; i < 4; i++) {
+                display += enteredPin[i] ? '•' : '_';
+            }
+            pinDisplay.textContent = display;
+        }
+        
+        function submitPin() {
+            if (enteredPin.length !== 4) {
+                showToast('Please enter 4-digit PIN', 'error');
+                return;
+            }
+            
+            const user = staff.find(s => s.pin === enteredPin);
+            if (user) {
+                currentUser = user;
+                document.getElementById('userName').textContent = user.name;
+                loginScreen.classList.add('hidden');
+                posInterface.classList.remove('hidden');
+                showToast(`Welcome, ${user.name}!`, 'success');
+            } else {
+                showToast('Invalid PIN', 'error');
+                clearPin();
+            }
+        }
+        
+        function logout() {
+            currentUser = null;
+            enteredPin = '';
+            updatePinDisplay();
+            posInterface.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            showToast('Logged out successfully', 'success');
+        }
+
+        // Navigation
+        function showPosSystem() {
+            adminPanel.classList.remove('active');
+            posSystem.classList.remove('hidden');
+            document.getElementById('posBtn').classList.remove('secondary');
+            document.getElementById('adminBtn').classList.add('secondary');
+        }
+        
+        function showAdminPanel() {
+            if (currentUser.role !== 'admin' && currentUser.role !== 'manager') {
+                showToast('Access denied. Admin or Manager role required.', 'error');
+                return;
+            }
+            
+            posSystem.classList.add('hidden');
+            adminPanel.classList.add('active');
+            document.getElementById('adminBtn').classList.remove('secondary');
+            document.getElementById('posBtn').classList.add('secondary');
+            renderAdminProducts();
+            renderStaffList();
+            updateSalesSummary();
+        }
+
+        // Product rendering
+        function renderProducts(category = 'all') {
+            productsGrid.innerHTML = '';
+            
+            const filteredProducts = category === 'all' 
+                ? products 
+                : products.filter(p => p.category === category);
+            
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = '<div class="empty-message">No products found</div>';
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image">${product.image}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">Rs. ${product.price.toFixed(2)}</div>
+                    </div>
+                `;
+                productCard.addEventListener('click', () => openModifiers(product));
+                productsGrid.appendChild(productCard);
+            });
+        }
+        
+        function renderAdminProducts() {
+            adminProductsGrid.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image">${product.image}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">Rs. ${product.price.toFixed(2)}</div>
+                    </div>
+                    <button class="edit-product-btn"><i class="fas fa-edit"></i></button>
+                    <button class="delete-product-btn"><i class="fas fa-trash"></i></button>
+                `;
                 
-                // Show/hide sections
-                document.getElementById('posSystem').classList.toggle('hidden', page !== 'pos');
-                document.getElementById('adminPanel').classList.toggle('hidden', page !== 'admin');
+                productCard.querySelector('.edit-product-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    editProduct(product);
+                });
                 
-                if (page === 'orders' || page === 'reports') {
-                    this.showToast(`${page.charAt(0).toUpperCase() + page.slice(1)} coming soon!`, 'info');
+                productCard.querySelector('.delete-product-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteProduct(product.id);
+                });
+                
+                adminProductsGrid.appendChild(productCard);
+            });
+        }
+
+        // Category handling
+        function handleCategoryClick(e) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            const category = e.target.getAttribute('data-category');
+            renderProducts(category);
+        }
+
+        // Modifiers panel
+        function openModifiers(product) {
+            selectedProduct = product;
+            document.getElementById('modifierProductName').textContent = product.name;
+            document.querySelectorAll('.modifier-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector('[data-modifier="size"][data-value="regular"]').classList.add('active');
+            document.getElementById('specialInstructions').value = '';
+            modifiersPanel.classList.add('active');
+            overlay.classList.add('active');
+        }
+        
+        function closeModifiers() {
+            modifiersPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            selectedProduct = null;
+        }
+        
+        function addProductToCart() {
+            if (!selectedProduct) return;
+            
+            // Get selected modifiers
+            const size = document.querySelector('.modifier-option[data-modifier="size"].active').getAttribute('data-value');
+            const toppings = Array.from(document.querySelectorAll('.modifier-option[data-modifier="topping"].active'))
+                .map(el => el.getAttribute('data-value'));
+            const instructions = document.getElementById('specialInstructions').value;
+            
+            // Calculate price with modifiers
+            let price = selectedProduct.price;
+            if (size === 'large') price += 100;
+            if (toppings.includes('whipped-cream')) price += 50;
+            if (toppings.includes('nuts')) price += 75;
+            if (toppings.includes('chocolate-sauce')) price += 60;
+            if (toppings.includes('caramel')) price += 70;
+            
+            // Add to cart
+            const cartItem = {
+                id: Date.now(),
+                productId: selectedProduct.id,
+                name: selectedProduct.name,
+                price: price,
+                size: size,
+                toppings: toppings,
+                instructions: instructions,
+                quantity: 1
+            };
+            
+            cart.push(cartItem);
+            saveData();
+            updateCart();
+            closeModifiers();
+            showToast(`${selectedProduct.name} added to cart`, 'success');
+        }
+
+        // Cart management
+        function updateCart() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart-message">Your cart is empty</div>';
+                total.textContent = 'Rs. 0.00';
+                return;
+            }
+            
+            let totalAmount = 0;
+            
+            cart.forEach(item => {
+                totalAmount += item.price * item.quantity;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="item-details">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-modifiers">
+                            ${item.size === 'large' ? 'Large' : 'Regular'}
+                            ${item.toppings.length > 0 ? `• ${item.toppings.map(t => t.replace('-', ' ')).join(', ')}` : ''}
+                            ${item.instructions ? `• ${item.instructions}` : ''}
+                        </div>
+                    </div>
+                    <div class="item-controls">
+                        <button class="quantity-btn decrease" data-id="${item.id}">-</button>
+                        <span class="item-quantity">${item.quantity}</span>
+                        <button class="quantity-btn increase" data-id="${item.id}">+</button>
+                    </div>
+                    <div class="item-price">Rs. ${(item.price * item.quantity).toFixed(2)}</div>
+                `;
+                
+                cartItem.querySelector('.decrease').addEventListener('click', () => {
+                    updateQuantity(item.id, -1);
+                });
+                
+                cartItem.querySelector('.increase').addEventListener('click', () => {
+                    updateQuantity(item.id, 1);
+                });
+                
+                cartItems.appendChild(cartItem);
+            });
+            
+            total.textContent = `Rs. ${totalAmount.toFixed(2)}`;
+        }
+        
+        function updateQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== itemId);
                 }
+                saveData();
+                updateCart();
             }
+        }
 
-            // Product Management
-            renderProducts(category = 'all') {
-                const grid = document.getElementById('productsGrid');
-                const filtered = category === 'all' ? this.products : this.products.filter(p => p.category === category);
+        // Checkout process
+        function startCheckout() {
+            if (cart.length === 0) {
+                showToast('Cart is empty', 'error');
+                return;
+            }
+            
+            paymentMethods.classList.remove('hidden');
+            checkoutBtn.textContent = 'Complete Payment';
+            checkoutBtn.removeEventListener('click', startCheckout);
+            checkoutBtn.addEventListener('click', completePayment);
+        }
+        
+        function handlePaymentMethod(e) {
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            e.target.classList.add('active');
+        }
+        
+        function completePayment() {
+            const selectedPayment = document.querySelector('.payment-btn.active');
+            if (!selectedPayment) {
+                showToast('Please select a payment method', 'error');
+                return;
+            }
+            
+            const paymentMethod = selectedPayment.getAttribute('data-method');
+            const orderTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Create order
+            const order = {
+                id: currentOrderId++,
+                items: [...cart],
+                total: orderTotal,
+                paymentMethod: paymentMethod,
+                timestamp: new Date().toISOString(),
+                staff: currentUser.name
+            };
+            
+            orders.push(order);
+            
+            // Update sales data
+            const today = new Date().toISOString().split('T')[0];
+            let todaySales = sales.find(s => s.date === today);
+            if (!todaySales) {
+                todaySales = { date: today, revenue: 0, orders: 0 };
+                sales.push(todaySales);
+            }
+            todaySales.revenue += orderTotal;
+            todaySales.orders += 1;
+            
+            // Show receipt
+            showReceipt(order);
+            
+            // Reset cart
+            cart = [];
+            saveData();
+            updateCart();
+            
+            // Reset checkout UI
+            paymentMethods.classList.add('hidden');
+            checkoutBtn.textContent = 'Checkout';
+            checkoutBtn.removeEventListener('click', completePayment);
+            checkoutBtn.addEventListener('click', startCheckout);
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            showToast('Order completed successfully!', 'success');
+        }
+        
+        function showReceipt(order) {
+            receiptItems.innerHTML = '';
+            
+            order.items.forEach(item => {
+                const receiptItem = document.createElement('div');
+                receiptItem.className = 'receipt-item';
+                receiptItem.innerHTML = `
+                    <span>${item.quantity}x ${item.name}</span>
+                    <span>Rs. ${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                receiptItems.appendChild(receiptItem);
+            });
+            
+            receiptTotal.textContent = `Rs. ${order.total.toFixed(2)}`;
+            receipt.classList.add('active');
+        }
+        
+        function startNewOrder() {
+            receipt.classList.remove('active');
+            document.getElementById('orderNumber').textContent = `#ORD-${currentOrderId.toString().padStart(3, '0')}`;
+        }
+        
+        function printReceipt() {
+            window.print();
+        }
+
+        // Admin functions
+        function handleAdminTabClick(e) {
+            const tabId = e.target.getAttribute('data-tab');
+            
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabId}Tab`).classList.add('active');
+        }
+        
+        function editProduct(product) {
+            editingProductId = product.id;
+            document.getElementById('formTitle').textContent = 'Edit Product';
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('imagePreview').style.display = 'none';
+            
+            document.getElementById('cancelEdit').classList.remove('hidden');
+        }
+        
+        function cancelEdit() {
+            editingProductId = null;
+            document.getElementById('formTitle').textContent = 'Add New Product';
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCategory').value = 'classic';
+            document.getElementById('imagePreview').style.display = 'none';
+            
+            document.getElementById('cancelEdit').classList.add('hidden');
+        }
+        
+        function saveProduct() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            
+            if (!name || !price) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (editingProductId) {
+                // Update existing product
+                const productIndex = products.findIndex(p => p.id === editingProductId);
+                if (productIndex !== -1) {
+                    products[productIndex].name = name;
+                    products[productIndex].price = price;
+                    products[productIndex].category = category;
+                }
+                showToast('Product updated successfully', 'success');
+            } else {
+                // Add new product
+                const newProduct = {
+                    id: Date.now(),
+                    name: name,
+                    price: price,
+                    category: category,
+                    image: '🍮' // Default icon
+                };
+                products.push(newProduct);
+                showToast('Product added successfully', 'success');
+            }
+            
+            saveData();
+            renderProducts();
+            renderAdminProducts();
+            cancelEdit();
+        }
+        
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(p => p.id !== productId);
+                saveData();
+                renderProducts();
+                renderAdminProducts();
+                showToast('Product deleted successfully', 'success');
+            }
+        }
+        
+        function addStaff() {
+            const name = document.getElementById('staffName').value;
+            const pin = document.getElementById('staffPin').value;
+            const role = document.getElementById('staffRole').value;
+            
+            if (!name || !pin || pin.length !== 4) {
+                showToast('Please enter valid name and 4-digit PIN', 'error');
+                return;
+            }
+            
+            const newStaff = {
+                id: Date.now(),
+                name: name,
+                pin: pin,
+                role: role
+            };
+            
+            staff.push(newStaff);
+            saveData();
+            renderStaffList();
+            
+            document.getElementById('staffName').value = '';
+            document.getElementById('staffPin').value = '';
+            document.getElementById('staffRole').value = 'staff';
+            
+            showToast('Staff member added successfully', 'success');
+        }
+        
+        function renderStaffList() {
+            staffList.innerHTML = '';
+            
+            staff.forEach(staffMember => {
+                const staffCard = document.createElement('div');
+                staffCard.className = 'staff-card';
+                staffCard.innerHTML = `
+                    <div class="staff-info">
+                        <h4>${staffMember.name}</h4>
+                        <p>Role: ${staffMember.role} | PIN: ${staffMember.pin}</p>
+                    </div>
+                    <div class="staff-actions">
+                        <button class="action-btn cancel-btn delete-staff" data-id="${staffMember.id}">Delete</button>
+                    </div>
+                `;
                 
-                grid.innerHTML = filtered.map(product => `
-                    <div class="product-card" onclick="app.addToCart(${product.id})">
-                        <div class="product-image">
-                            <i class="${product.icon}"></i>
-                        </div>
-                        <div class="product-info">
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-price">Rs. ${product.price}</div>
-                        </div>
-                        ${this.currentUser?.role === 'admin' ? `
-                            <button class="edit-product-btn" onclick="app.editProduct(${product.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        ` : ''}
-                    </div>
-                `).join('');
+                staffCard.querySelector('.delete-staff').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteStaff(staffMember.id);
+                });
+                
+                staffList.appendChild(staffCard);
+            });
+        }
+        
+        function deleteStaff(staffId) {
+            if (staff.length <= 1) {
+                showToast('Cannot delete the last staff member', 'error');
+                return;
             }
-
-            renderAdminProducts() {
-                const grid = document.getElementById('adminProductsGrid');
-                grid.innerHTML = this.products.map(product => `
-                    <div class="product-card">
-                        <div class="product-image">
-                            <i class="${product.icon}"></i>
-                        </div>
-                        <div class="product-info">
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-price">Rs. ${product.price}</div>
-                            <div style="font-size: 0.8rem; color: var(--gray);">${product.category}</div>
-                        </div>
-                        <button class="edit-product-btn" onclick="app.editProduct(${product.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="edit-product-btn" style="top: 50px;" onclick="app.deleteProduct(${product.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `).join('');
+            
+            if (confirm('Are you sure you want to delete this staff member?')) {
+                staff = staff.filter(s => s.id !== staffId);
+                saveData();
+                renderStaffList();
+                showToast('Staff member deleted successfully', 'success');
             }
-
-            addToCart(productId) {
-                const product = this.products.find(p => p.id === productId);
-                if (product) {
-                    const existing = this.currentCart.find(item => item.product.id === productId);
-                    if (existing) {
-                        existing.quantity++;
-                    } else {
-                        this.currentCart.push({
-                            id: Date.now(),
-                            product: product,
-                            quantity: 1,
-                            modifiers: {}
-                        });
+        }
+        
+        function updateSalesSummary() {
+            const today = new Date().toISOString().split('T')[0];
+            const todaySales = sales.find(s => s.date === today) || { revenue: 0, orders: 0 };
+            
+            document.getElementById('todayRevenue').textContent = `Rs. ${todaySales.revenue.toFixed(2)}`;
+            document.getElementById('todayOrders').textContent = todaySales.orders;
+            document.getElementById('avgOrderValue').textContent = todaySales.orders > 0 
+                ? `Rs. ${(todaySales.revenue / todaySales.orders).toFixed(2)}` 
+                : 'Rs. 0.00';
+            
+            // Get best selling product
+            const productSales = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    if (!productSales[item.productId]) {
+                        productSales[item.productId] = 0;
                     }
-                    this.updateCartUI();
-                    this.showToast(`Added ${product.name} to cart!`, 'success');
+                    productSales[item.productId] += item.quantity;
+                });
+            });
+            
+            let bestSeller = '-';
+            let maxSales = 0;
+            
+            Object.keys(productSales).forEach(productId => {
+                if (productSales[productId] > maxSales) {
+                    maxSales = productSales[productId];
+                    const product = products.find(p => p.id == productId);
+                    if (product) {
+                        bestSeller = product.name;
+                    }
                 }
+            });
+            
+            document.getElementById('bestSeller').textContent = bestSeller;
+            
+            // Update recent orders
+            recentOrders.innerHTML = '';
+            const recentOrdersList = orders.slice(-5).reverse();
+            
+            recentOrdersList.forEach(order => {
+                const orderDate = new Date(order.timestamp);
+                const timeString = orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${order.id.toString().padStart(3, '0')}</td>
+                    <td>${timeString}</td>
+                    <td>${order.items.length} items</td>
+                    <td>Rs. ${order.total.toFixed(2)}</td>
+                    <td>${order.paymentMethod}</td>
+                `;
+                recentOrders.appendChild(row);
+            });
+        }
+        
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
+        }
 
-            updateCartUI() {
-                const itemsContainer = document.getElementById('cartItems');
-                const totalElement = document.getElementById('totalAmount');
-                const badge = document.getElementById('cartBadge');
-                
-                // Update badge
-                const totalItems = this.currentCart.reduce((sum, item) => sum + item.quantity, 0);
-                badge.textContent = totalItems;
-                
-                // Update cart items
-                if (this.currentCart.length === 0) {
-                    itemsContainer.innerHTML = `
-                        <div style="text-align: center; color: var(--gray); padding: 40px 20px;">
-                            <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; opacity
+        // Backup system
+        function setupBackupSystem() {
+            // Load backup settings
+            const autoBackupEnabled = localStorage.getItem('dailyDelightAutoBackup') === 'true';
+            const backupInterval = localStorage.getItem('dailyDelightBackupInterval') || '1800000';
+            const lastBackup = localStorage.getItem('dailyDelightLastBackup');
+            const lastExport = localStorage.getItem('dailyDelightLastExport');
+            const lastImport = localStorage.getItem('dailyDelightLastImport');
+            
+            document.getElementById('autoBackupToggle').checked = autoBackupEnabled;
+            document.getElementById('backupInterval').value = backupInterval;
+            
+            if (lastBackup) {
+                document.getElementById('lastBackupInfo').textContent = `Last backup: ${new Date(lastBackup).toLocaleString()}`;
+            }
+            
+            if (lastExport) {
+                document.getElementById('exportInfo').textContent = `Last export: ${new Date(lastExport).toLocaleString()}`;
+            }
+            
+            if (lastImport) {
+                document.getElementById('importInfo').textContent = `Last import: ${new Date(lastImport).toLocaleString()}`;
+            }
+            
+            if (autoBackupEnabled) {
+                startAutoBackup(parseInt(backupInterval));
+            }
+        }
+        
+        function toggleAutoBackup() {
+            const enabled = document.getElementById('autoBackupToggle').checked;
+            const interval = parseInt(document.getElementById('backupInterval').value);
+            
+            localStorage.setItem('dailyDelightAutoBackup', enabled);
+            localStorage.setItem('dailyDelightBackupInterval', interval);
+            
+            if (enabled) {
+                startAutoBackup(interval);
+                showToast('Auto backup enabled', 'success');
+            } else {
+                stopAutoBackup();
+                showToast('Auto backup disabled', 'warning');
+            }
+        }
+        
+        function startAutoBackup(interval) {
+            stopAutoBackup();
+            autoBackupInterval = setInterval(createBackup, interval);
+        }
+        
+        function stopAutoBackup() {
+            if (autoBackupInterval) {
+                clearInterval(autoBackupInterval);
+                autoBackupInterval = null;
+            }
+        }
+        
+        function createBackup() {
+            const backupData = {
+                products: products,
+                sales: sales,
+                orders: orders,
+                staff: staff,
+                backupDate: new Date().toISOString()
+            };
+            
+            localStorage.setItem('dailyDelightBackup', JSON.stringify(backupData));
+            localStorage.setItem('dailyDelightLastBackup', new Date().toISOString());
+            
+            document.getElementById('lastBackupInfo').textContent = `Last backup: ${new Date().toLocaleString()}`;
+            
+            if (document.getElementById('autoBackupToggle').checked) {
+                console.log('Auto backup completed');
+            } else {
+                showToast('Backup created successfully', 'success');
+            }
+        }
+        
+        function exportData() {
+            const data = {
+                products: products,
+                sales: sales,
+                orders: orders,
+                staff: staff,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `daily-delight-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            localStorage.setItem('dailyDelightLastExport', new Date().toISOString());
+            document.getElementById('exportInfo').textContent = `Last export: ${new Date().toLocaleString()}`;
+            
+            showToast('Data exported successfully', 'success');
+        }
+        
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    
+                    if (confirm('This will replace all current data. Are you sure?')) {
+                        if (data.products) products = data.products;
+                        if (data.sales) sales = data.sales;
+                        if (data.orders) orders = data.orders;
+                        if (data.staff) staff = data.staff;
+                        
+                        saveData();
+                        renderProducts();
+                        renderAdminProducts();
+                        renderStaffList();
+                        updateSalesSummary();
+                        
+                        localStorage.setItem('dailyDelightLastImport', new Date().toISOString());
+                        document.getElementById('importInfo').textContent = `Last import: ${new Date().toLocaleString()}`;
+                        
+                        showToast('Data imported successfully', 'success');
+                    }
+                } catch (error) {
+                    showToast('Error importing data: Invalid file format', 'error');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            e.target.value = '';
+        }
+
+        // Utility functions
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
