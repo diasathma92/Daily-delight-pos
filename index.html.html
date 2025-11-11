@@ -1174,6 +1174,11 @@
                                     <i class="fas fa-download"></i> Export All Data
                                 </button>
                             </div>
+                            <div class="backup-actions">
+                                <button class="action-btn add-to-cart-btn" id="exportSalesSummary">
+                                    <i class="fas fa-file-alt"></i> Export Sales Summary
+                                </button>
+                            </div>
                             <div class="backup-info" id="exportInfo">
                                 Last export: Never
                             </div>
@@ -2262,7 +2267,105 @@ alert('Data restored successfully!');
                 toast.classList.remove('show');
             }, 3000);
         }
+            // Export Sales Summary to File
+document.getElementById('exportSalesSummary').addEventListener('click', function() {
+    exportSalesSummary();
+});
 
+function exportSalesSummary() {
+    const today = new Date().toISOString().split('T')[0];
+    const todaySales = sales.find(s => s.date === today) || { revenue: 0, orders: 0 };
+    
+    // Calculate product sales
+    const productSales = {};
+    orders.forEach(order => {
+        order.items.forEach(item => {
+            if (!productSales[item.productId]) {
+                productSales[item.productId] = {
+                    quantity: 0,
+                    revenue: 0,
+                    name: item.name
+                };
+            }
+            productSales[item.productId].quantity += item.quantity;
+            productSales[item.productId].revenue += item.price * item.quantity;
+        });
+    });
+    
+    // Find best seller
+    let bestSeller = '-';
+    let maxSales = 0;
+    Object.keys(productSales).forEach(productId => {
+        if (productSales[productId].quantity > maxSales) {
+            maxSales = productSales[productId].quantity;
+            bestSeller = productSales[productId].name;
+        }
+    });
+    
+    // Create sales summary text
+    let summaryText = `DAILY DELIGHT PUDDINGS - SALES SUMMARY\n`;
+    summaryText += `=========================================\n`;
+    summaryText += `Date: ${new Date().toLocaleDateString()}\n`;
+    summaryText += `Generated: ${new Date().toLocaleString()}\n\n`;
+    
+    summaryText += `TODAY'S OVERVIEW:\n`;
+    summaryText += `-----------------\n`;
+    summaryText += `Total Revenue: Rs. ${todaySales.revenue.toFixed(2)}\n`;
+    summaryText += `Total Orders: ${todaySales.orders}\n`;
+    summaryText += `Average Order Value: Rs. ${todaySales.orders > 0 ? (todaySales.revenue / todaySales.orders).toFixed(2) : '0.00'}\n`;
+    summaryText += `Best Selling Product: ${bestSeller}\n\n`;
+    
+    summaryText += `PRODUCT BREAKDOWN:\n`;
+    summaryText += `------------------\n`;
+    
+    // Sort products by sales quantity
+    const sortedProducts = Object.keys(productSales)
+        .map(id => ({ id, ...productSales[id] }))
+        .sort((a, b) => b.quantity - a.quantity);
+    
+    if (sortedProducts.length > 0) {
+        sortedProducts.forEach(product => {
+            summaryText += `${product.name}:\n`;
+            summaryText += `  Quantity Sold: ${product.quantity}\n`;
+            summaryText += `  Revenue: Rs. ${product.revenue.toFixed(2)}\n\n`;
+        });
+    } else {
+        summaryText += `No products sold today\n\n`;
+    }
+    
+    summaryText += `RECENT ORDERS (Last 10):\n`;
+    summaryText += `------------------------\n`;
+    
+    const recentOrders = orders.slice(-10).reverse();
+    if (recentOrders.length > 0) {
+        recentOrders.forEach(order => {
+            const orderDate = new Date(order.timestamp);
+            summaryText += `Order #${order.id} - ${orderDate.toLocaleTimeString()} - Rs. ${order.total.toFixed(2)} - ${order.paymentMethod}\n`;
+            order.items.forEach(item => {
+                summaryText += `  ${item.quantity}x ${item.name} - Rs. ${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            summaryText += `\n`;
+        });
+    } else {
+        summaryText += `No orders today\n`;
+    }
+    
+    summaryText += `=========================================\n`;
+    summaryText += `End of Report\n`;
+    
+    // Create and download file
+    const blob = new Blob([summaryText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `sales-summary-${today}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    showToast('Sales summary exported successfully!', 'success');
+}
         // Initialize the app
         document.addEventListener('DOMContentLoaded', init);
     </script>
