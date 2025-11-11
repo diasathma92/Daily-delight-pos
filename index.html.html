@@ -765,6 +765,7 @@
             cursor: pointer;
             transition: border-color 0.3s;
             margin-bottom: 15px;
+            position: relative;
         }
 
         .image-upload:hover {
@@ -783,6 +784,23 @@
             border-radius: 10px;
             margin-top: 10px;
             display: none;
+        }
+
+        .image-upload.has-image {
+            padding-bottom: 60px;
+        }
+
+        .remove-image {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
         /* Utility Classes */
@@ -1054,9 +1072,10 @@
                         <label for="productImage">Product Image</label>
                         <div class="image-upload" id="imageUpload">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Click to upload product image</p>
-                            <input type="file" id="productImage" accept="image/*" style="display: none;">
+                            <p>Click to upload product image (JPG, PNG)</p>
+                            <input type="file" id="productImage" accept="image/jpeg,image/png" style="display: none;">
                             <img id="imagePreview" class="image-preview" alt="Image preview">
+                            <button class="remove-image hidden" id="removeImage">Remove Image</button>
                         </div>
                     </div>
                     <div class="form-actions">
@@ -1295,6 +1314,9 @@ alert('Data restored successfully!');
         const staffList = document.getElementById('staffList');
         const recentOrders = document.getElementById('recentOrders');
         const toast = document.getElementById('toast');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImage');
 
         // Initialize the application
         function init() {
@@ -1408,10 +1430,11 @@ alert('Data restored successfully!');
             document.getElementById('addStaff').addEventListener('click', addStaff);
             
             // Image upload
-            document.getElementById('imageUpload').addEventListener('click', () => {
+            imageUpload.addEventListener('click', () => {
                 document.getElementById('productImage').click();
             });
             document.getElementById('productImage').addEventListener('change', handleImageUpload);
+            removeImageBtn.addEventListener('click', removeImage);
             
             // Backup system
             document.getElementById('exportData').addEventListener('click', exportData);
@@ -1523,9 +1546,9 @@ alert('Data restored successfully!');
                 
                 // Check if product has an image URL or emoji
                 let imageContent;
-                if (product.image && product.image.startsWith('http')) {
-                    // It's a URL - use img tag
-                    imageContent = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-ice-cream\\'></i>';">`;
+                if (product.image && product.image.startsWith('data:image')) {
+                    // It's a data URL - use img tag
+                    imageContent = `<img src="${product.image}" alt="${product.name}" onerror="handleImageError(this)">`;
                 } else if (product.image) {
                     // It's an emoji or icon class
                     if (product.image.includes('fa-')) {
@@ -1561,9 +1584,9 @@ alert('Data restored successfully!');
                 
                 // Check if product has an image URL or emoji
                 let imageContent;
-                if (product.image && product.image.startsWith('http')) {
-                    // It's a URL - use img tag
-                    imageContent = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\\'fas fa-ice-cream\\'></i>';">`;
+                if (product.image && product.image.startsWith('data:image')) {
+                    // It's a data URL - use img tag
+                    imageContent = `<img src="${product.image}" alt="${product.name}" onerror="handleImageError(this)">`;
                 } else if (product.image) {
                     // It's an emoji or icon class
                     if (product.image.includes('fa-')) {
@@ -1600,6 +1623,12 @@ alert('Data restored successfully!');
                 
                 adminProductsGrid.appendChild(productCard);
             });
+        }
+
+        // Handle image loading errors
+        function handleImageError(img) {
+            img.style.display = 'none';
+            img.parentNode.innerHTML = '<i class="fas fa-ice-cream"></i>';
         }
 
         // Category handling
@@ -1848,12 +1877,15 @@ alert('Data restored successfully!');
             document.getElementById('productCategory').value = product.category;
             
             // Handle image preview
-            const imagePreview = document.getElementById('imagePreview');
-            if (product.image && product.image.startsWith('http')) {
+            if (product.image && product.image.startsWith('data:image')) {
                 imagePreview.src = product.image;
                 imagePreview.style.display = 'block';
+                removeImageBtn.classList.remove('hidden');
+                imageUpload.classList.add('has-image');
             } else {
                 imagePreview.style.display = 'none';
+                removeImageBtn.classList.add('hidden');
+                imageUpload.classList.remove('has-image');
             }
             
             document.getElementById('cancelEdit').classList.remove('hidden');
@@ -1865,7 +1897,9 @@ alert('Data restored successfully!');
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
             document.getElementById('productCategory').value = 'classic';
-            document.getElementById('imagePreview').style.display = 'none';
+            imagePreview.style.display = 'none';
+            removeImageBtn.classList.add('hidden');
+            imageUpload.classList.remove('has-image');
             
             document.getElementById('cancelEdit').classList.add('hidden');
         }
@@ -1874,7 +1908,6 @@ alert('Data restored successfully!');
             const name = document.getElementById('productName').value;
             const price = parseFloat(document.getElementById('productPrice').value);
             const category = document.getElementById('productCategory').value;
-            const imagePreview = document.getElementById('imagePreview');
             
             if (!name || !price) {
                 showToast('Please fill in all fields', 'error');
@@ -1892,6 +1925,9 @@ alert('Data restored successfully!');
                     // Update image if a new one was uploaded
                     if (imagePreview.style.display !== 'none') {
                         products[productIndex].image = imagePreview.src;
+                    } else {
+                        // If no image, use default emoji
+                        products[productIndex].image = '🍮';
                     }
                 }
                 showToast('Product updated successfully', 'success');
@@ -2050,14 +2086,28 @@ alert('Data restored successfully!');
         function handleImageUpload(e) {
             const file = e.target.files[0];
             if (file) {
+                // Check if file is an image
+                if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
+                    showToast('Please upload a JPG or PNG image', 'error');
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    const imagePreview = document.getElementById('imagePreview');
                     imagePreview.src = event.target.result;
                     imagePreview.style.display = 'block';
+                    removeImageBtn.classList.remove('hidden');
+                    imageUpload.classList.add('has-image');
                 };
                 reader.readAsDataURL(file);
             }
+        }
+        
+        function removeImage() {
+            imagePreview.style.display = 'none';
+            removeImageBtn.classList.add('hidden');
+            imageUpload.classList.remove('has-image');
+            document.getElementById('productImage').value = '';
         }
 
         // Backup system
