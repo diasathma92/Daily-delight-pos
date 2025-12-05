@@ -2123,18 +2123,7 @@ alert('Data restored successfully!');
         }
 
         // Backup system
-        <div class="backup-card">
-    <h4><i class="fas fa-mobile-alt"></i> Install App</h4>
-    <p>Install this app on your device for quick access</p>
-    <div class="backup-actions">
-        <button class="action-btn add-to-cart-btn" id="installAppBtn" style="display: none;">
-            <i class="fas fa-download"></i> Install App
-        </button>
-        <p id="installStatus" style="font-size: 0.9rem; color: #666;">
-            Use browser menu to "Add to Home Screen"
-        </p>
-    </div>
-</div>
+       
         function setupBackupSystem() {
             // Load backup settings
             const autoBackupEnabled = localStorage.getItem('dailyDelightAutoBackup') === 'true';
